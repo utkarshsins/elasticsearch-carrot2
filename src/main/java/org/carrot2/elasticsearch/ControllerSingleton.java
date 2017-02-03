@@ -89,7 +89,7 @@ public class ControllerSingleton extends AbstractLifecycleComponent {
                         "Could not find algorithm suite: " + suitePath.toAbsolutePath().normalize());
             }
 
-            final ResourceLookup suiteLookup = new ResourceLookup(new DirLocator(suitePath.getParent()));
+            final ResourceLookup suiteLookup = new ResourceLookup(new DirLocator(suitePath.getParent().toFile()));
             final IResource suiteResource =
                     suiteLookup.getFirst(suitePath.getFileName().toString());
 
@@ -118,7 +118,7 @@ public class ControllerSingleton extends AbstractLifecycleComponent {
             logger.info("Lexical resources dir: {}", resourcesPath);
 
             final ResourceLookup resourceLookup = new ResourceLookup(
-                    new DirLocator(resourcesPath),
+                    new DirLocator(resourcesPath.toFile()),
                     new ClassLoaderLocator(ControllerSingleton.class.getClassLoader()));
 
             // Change the default resource lookup to include the configured location.
@@ -130,7 +130,7 @@ public class ControllerSingleton extends AbstractLifecycleComponent {
             // Set up the license for Lingo3G, if it's available.
             Path lingo3gLicense = scanForLingo3GLicense(environment, pluginConfigPath);
             if (lingo3gLicense != null && Files.isReadable(lingo3gLicense)) {
-              c2SettingsAsMap.put("license", new FileResource(lingo3gLicense));
+              c2SettingsAsMap.put("license", new FileResource(lingo3gLicense.toFile()));
             } else if (algorithms.contains("lingo3g")) {
               logger.warn("Lingo3G is on classpath, but no licenses have been found. Check out the documentation.");
             }
