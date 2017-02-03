@@ -14,32 +14,57 @@ In order to install a stable version of the plugin,
 run ElasticSearch's `plugin` utility (remember to pick the
 ES-compatible version of the plugin from the table below!).
 
-    bin/plugin install org.carrot2/elasticsearch-carrot2/2.4.3
+    bin/plugin install org.carrot2/elasticsearch-carrot2/5.1.1
 
-To install from sources (master branch), run:
+To install from sources (master branch), run (if you have Gradle
+installed alreadty):
 
-    mvn clean package
-    
-and then install with:
+    gradle clean build
 
-    bin/plugin install file:(plugin)/target/releases/*.zip
+or use the provided bootstrap script:
 
-From ES 2.2.0 the installer will request confirmation concerning
-extended security permissions. You have to accept it (and live with
-it).
+    gradlew clean build
 
+then install with:
 
-Usage guide
------------
+    Linux:
+    bin/plugin install file:/.../(plugin)/build/distributions/*.zip
 
-Once installed, restart ElasticSearch and point your browser to:
-<http://localhost:9200/_plugin/elasticsearch-carrot2/>
-(or wherever your ES node is deployed). That file contains
-some sample data and query examples.
+    Windows:
+    bin/plugin install file:///c:/.../(plugin)/build/distributions/*.zip
 
-Alternatively, the plugin's folder contains `_site/curl/` sub-folder
-which in turn contains sample `curl` scripts that inject data into
-ES and query the clustering plugin.
+Starting with ES 2.2.0, the installer will request confirmation 
+concerning extended security permissions. You have to accept it.
+
+Usage
+-----
+
+To play with the examples in the documentation, you'll have to allow 
+CORS requests from null (if opened directly) or localhost (if served 
+by some local HTTP server). Add the following to ES/config/elasticsearch.yml:
+
+```
+# Allow localhost cross-origin requests.
+http.cors.enabled: true
+http.cors.allow-origin: /(null)|(https?:\/\/localhost(:[0-9]+)?)/
+```
+
+More information about security implications of enabling CORS are here:
+https://www.elastic.co/guide/en/elasticsearch/reference/5.0/modules-http.html
+
+Finally, start ES and open up the documentation in your browser 
+(can be opened as a file resource):
+  
+(plugin sources)/doc/index.html
+
+Alternatively, you can allow CORS headers from cdn.rawgit.com and open 
+the documentation directly from there:
+
+https://cdn.rawgit.com/carrot2/elasticsearch-carrot2/master/doc/index.html
+
+CURL request examples are available here:
+
+https://github.com/carrot2/elasticsearch-carrot2/tree/master/doc/curl/
 
 
 Versions and compatibility
@@ -65,6 +90,7 @@ given ES version.
     | Clustering Plugin, ES (matching versions)  | Carrot2 | Lingo3G |
     ------------------------------------------------------------------
     | (master, unreleased)                       | 3.15.0  | 1.15.0  |
+    | 5.1.1                                      | 3.15.0  | 1.15.0  |
     | 2.4.2 -> 2.4.3                             | 3.15.0  | 1.15.0  |
     | 2.4.1.1                                    | 3.15.0  | 1.15.0  |
     | 2.4.1 -> 2.4.1                             | 3.14.0  | 1.14.0  |

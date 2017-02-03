@@ -60,6 +60,21 @@
       </div>
 
       <div class="row">
+        <div class="span1"><span class="step">0</span></div>
+        <div class="span11 dropped">
+          <p>
+          This documentation has a hardcoded ElasticSearch URL pointing
+          at: <button class="btn" id="ES_URL">?</button>. Make sure you
+          have configured CORS permissions properly by adding the following
+          to ES's configuration file:
+          </p>
+          <pre># Allow localhost cross-origin requests
+http.cors.enabled: true
+http.cors.allow-origin: /(null)|(https?:\/\/localhost(:[0-9]+)?)/</pre>
+        </div>
+      </div>
+
+      <div class="row">
         <div class="span1"><span class="step">1</span></div>
         <div class="span11 dropped">
           <form class="form-inline" id="indexform">
@@ -106,9 +121,11 @@
       <script src="assets/js/carrotsearch.circles.js"></script>
       <script src="assets/js/carrotsearch.foamtree.js"></script>
       <script src="assets/js/sample-data.js"></script>
+      <script src="assets/js/config.js"></script>
       <script>
-
         $(document).ready(function () {
+          $("#ES_URL").text(window.ES_URL);
+
           // Initialize visualizations
           var circles = new CarrotSearchCircles({
             id: "circles",
@@ -133,7 +150,7 @@
             // ES search request data
             var request = {
               "search_request": {
-                "fields": [ "url", "title", "content" ],
+                "_source": [ "url", "title", "content" ],
                 "query": {
                   "match": { "_all": query }
                 },
@@ -143,14 +160,14 @@
               "query_hint": query,
               "algorithm": algorithm,
               "field_mapping": {
-                "title": ["fields.title"],
-                "content": ["fields.content"],
-                "url": ["fields.url"]
+                "title": ["_source.title"],
+                "content": ["_source.content"],
+                "url": ["_source.url"]
               }
             };
 
             $progress.text("loading...");
-            $.post("/test/test/_search_with_clusters",
+            $.post(window.ES_URL + "/test/test/_search_with_clusters",
               JSON.stringify(request), function (result) {
                 if (result.hits.total > 0) {
                   $progress.text("");
@@ -214,7 +231,7 @@
             e.preventDefault();
             
             $.ajax({
-              url: "/_stats?pretty=true",
+              url: window.ES_URL + "/_stats?pretty=true",
               success: function(response) {
                 var indexReady = response &&
                                  response.indices &&
@@ -241,13 +258,13 @@
 
           // Check if we have the ES available at all.
           $.ajax({
-            url: "/_stats?pretty=true",
+            url: window.ES_URL + "/_stats?pretty=true",
             error: function() {
               $("#noes").slideDown(1000);
             },
             success: function(response) {
               // Update algorithms list.
-              $.get("/_algorithms", function(data) {
+              $.get(window.ES_URL + "/_algorithms", function(data) {
                 data.algorithms.forEach(function(algorithm) {
                   $("#algorithm").append("<option>" + algorithm + "</option>");
                 });

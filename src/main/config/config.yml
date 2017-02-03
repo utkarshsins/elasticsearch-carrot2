@@ -2,12 +2,12 @@
 #
 # The main "algorithm suite" definition file.
 #
-suite: algorithms/suite.xml
+suite: suite.xml
 
 #
 # Path to lexical resources (when required by algorithms).
 #
-resources: resources
+resources: .
 
 #
 # Size of the internal pool of algorithm instances. 

@@ -7,7 +7,7 @@ doIndex = function(progressFn) {
   var sampleData;
 
   function _doIndex() {
-    var url = "/test/test/" + i;
+    var url = window.ES_URL + "/test/test/" + i;
 
     if (i < sampleData.length) {
       $.post(url, JSON.stringify(sampleData[i]), function(result) {
@@ -16,7 +16,7 @@ doIndex = function(progressFn) {
         _doIndex(progressFn);
       });
     } else {
-      $.post("/_flush", function(result) {
+      $.post(window.ES_URL + "/_flush", function(result) {
         progressFn && progressFn(i, sampleData.length);
       });
     }
