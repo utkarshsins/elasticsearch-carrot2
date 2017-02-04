@@ -89,7 +89,8 @@ public class ControllerSingleton extends AbstractLifecycleComponent {
                         "Could not find algorithm suite: " + suitePath.toAbsolutePath().normalize());
             }
 
-            final ResourceLookup suiteLookup = new ResourceLookup(new DirLocator(suitePath.getParent().toFile()));
+            final ResourceLookup suiteLookup = AccessController.doPrivileged((PrivilegedAction<ResourceLookup>) () ->
+                    new ResourceLookup(new DirLocator(suitePath.getParent().toFile())));
             final IResource suiteResource =
                     suiteLookup.getFirst(suitePath.getFileName().toString());
 
@@ -117,9 +118,9 @@ public class ControllerSingleton extends AbstractLifecycleComponent {
 
             logger.info("Lexical resources dir: {}", resourcesPath);
 
-            final ResourceLookup resourceLookup = new ResourceLookup(
-                    new DirLocator(resourcesPath.toFile()),
-                    new ClassLoaderLocator(ControllerSingleton.class.getClassLoader()));
+            final ResourceLookup resourceLookup = AccessController.doPrivileged((PrivilegedAction<ResourceLookup>) () ->
+                    new ResourceLookup(new DirLocator(resourcesPath.toFile()),
+                    new ClassLoaderLocator(ControllerSingleton.class.getClassLoader())));
 
             // Change the default resource lookup to include the configured location.
             Map<String, Object> c2SettingsAsMap = new HashMap<>();
@@ -188,7 +189,8 @@ public class ControllerSingleton extends AbstractLifecycleComponent {
     private ProcessingComponentSuite getProcessingComponentSuite(IResource suiteResource,
                                                                  ResourceLookup suiteLookup,
                                                                  List<String> failedComponents) throws Exception {
-        ProcessingComponentSuite suite1 = ProcessingComponentSuite.deserialize(suiteResource, suiteLookup);
+        ProcessingComponentSuite suite1 = AccessController.doPrivileged((PrivilegedExceptionAction<ProcessingComponentSuite>) ()
+                -> ProcessingComponentSuite.deserialize(suiteResource, suiteLookup));
         for (ProcessingComponentDescriptor desc : suite1.removeUnavailableComponents()) {
             failedComponents.add(desc.getId());
             if (isNoClassDefFound(desc.getInitializationFailure())) {

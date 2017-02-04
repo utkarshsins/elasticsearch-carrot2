@@ -2,4 +2,11 @@ grant {
   // required for simpleframework (XML deserialization)
   permission java.lang.reflect.ReflectPermission "suppressAccessChecks";
   permission java.lang.RuntimePermission "accessDeclaredMembers";
+  permission java.lang.RuntimePermission "getClassLoader";
+
+  permission java.lang.PropertyPermission "user.home", "read";
+  permission java.io.FilePermission "${user.home}", "read,execute";
+  permission java.io.FilePermission "${user.home}/-", "read";
+  permission java.io.FilePermission "<<ALL FILES>>", "execute";
+  permission java.io.FilePermission "/usr/local/elasticsearch/config/elasticsearch-carrot2/-" "read,execute";
 };
